@@ -18,6 +18,8 @@ short is 2 bite
 int is 4 bite
 float is 4 bite
 double is 8 bite
+float is 4 bite
+double is 8 bite
 */
 
 
