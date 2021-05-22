@@ -1,11 +1,8 @@
 #include <stdio.h>
 
 int main(void){
-    printf("Long is %d bite\n",(int)(sizeof(long)));
-    printf("char is %d bite\n",(int)(sizeof(char)));
-    printf("short is %d bite\n",(int)(sizeof(short)));
-    printf("int is %d bite\n",(int)(sizeof(int)));
     printf("float is %d bite\n",(int)(sizeof(float)));
+    printf("double is %d bite\n",(int)(sizeof(double)));
     printf("double is %d bite\n",(int)(sizeof(double)));
 }
 
