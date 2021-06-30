@@ -1,0 +1,8 @@
+
+
+load
+    a as c,
+    b as d
+resident table;
+
+
