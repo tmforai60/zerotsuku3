@@ -4,7 +4,9 @@
 
 extern int Fibonacci(int);
 
+int result_store[100];
 int call_count =0;
+
 int main(int argc, char *args[]){
     int n, r;
     n = 10;
@@ -16,6 +18,11 @@ int Fibonacci(int a_n){
     call_count++;
     if (a_n ==0) return 0;
     if (a_n ==1) return 1;
-    return Fibonacci(a_n -1)+Fibonacci(a_n -2);
+    if(result_store[a_n]) return result_store[a_n];
+
+    result_store[a_n] = Fibonacci(a_n -1)+Fibonacci(a_n -2);
+
+    return result_store[a_n]; 
 }
+
 
