@@ -22,7 +22,7 @@ void funcA(int x){
     x=100;
 }
 
-void funcB(int x[3]){ //int *x　でもOK
+void funcB(int x[3]){ //int *x　を書いたものとして扱われる
     x[0]=100;
     *(x+2)=500; //x[2]と同義
 }
