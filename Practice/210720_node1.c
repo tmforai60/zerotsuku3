@@ -35,12 +35,12 @@ int main(int argc, char *argv[]){
  */
         // リストの最初に追加する。
         p = start;            // 
-        start = get_node();   // new 番兵
+        start = get_node();   // new　NODE
         start->num = x;
         start->next = p;
     }
 
-    for (p=start;p != end;p=p->next){
+    for (p=start;p != end; p=p->next){
         printf("%d\n", p->num);
     }
     return 0;
