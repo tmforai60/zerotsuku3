@@ -2,14 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-struct node {
+typedef struct node {
     int num;
     struct node * next;
-};
-typedef struct node NODE;
+} NODE;
 
 NODE *start, *end;
-// NODE n1[1];
+
 NODE * get_node(){
     return malloc(sizeof(NODE));
 }
@@ -31,8 +30,8 @@ int main(int argc, char *argv[]){
  /*     p = end;            // endを保存
         end = get_node();   // new 番兵
         p->num = x;
-        p->next = end;
- */
+        p->next = end; */
+
         // リストの最初に追加する。
         p = start;            // 
         start = get_node();   // new　NODE
