@@ -33,18 +33,32 @@ int main(int argc, char *argv[]){
         p->num = x;
         p->next = end;
 
-  /*       // リストの最初に追加する。
-        p = start;            // 
-        start = get_node();   // new　NODE
-        start->num = x;
-        start->next = p; */
     }
 
+    printf("削除前\n");
     for (p=start;p != end; p=p->next){
         printf("%d\n", p->num);
     }
 
- /*    q=p->next */
+
+    for (p=start;p != end; p=p->next){
+        if(p->num % 2 ==0){
+             q=p->next;
+                if(q==end){
+                    end=p;
+                }
+                else
+                {
+                    *p=*q;
+                }
+                free(q);
+        }
+    }
+
+    printf("削除後\n");
+   for (p=start;p != end; p=p->next){
+        printf("%d\n", p->num);
+    }
 
     return 0;
 }
