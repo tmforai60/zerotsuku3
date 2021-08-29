@@ -40,18 +40,20 @@ int main(int argc, char *argv[]){
         printf("%d\n", p->num);
     }
 
-
-    for (p=start;p != end; p=p->next){
+    for (p=start;p != end; p=p->next){   
         if(p->num % 2 ==0){
-             q=p->next;
-                if(q==end){
-                    end=p;
-                }
-                else
-                {
-                    *p=*q;
-                }
-                free(q);
+            q=p->next;
+            if(q==end){
+                printf("最終ノード\n");
+                end = p;
+            } else {
+                *p=*q;
+            }
+            free(q);
+        }
+        if(p==end) {
+            printf("p==end\n");
+            break;
         }
     }
 
