@@ -1,0 +1,165 @@
+// OverrideScriptSecurity=1
+// StandardReload=0
+
+set SalesPath = 'C:\Users\marun\OneDrive\デスクトップ\Folder\Qlikveiw Reference Book';
+set BackupPath = 'C:\Users\marun\OneDrive\デスクトップ\Folder\Qlikveiw Reference Book';
+
+//04\11\2021 Sun お尻から数えて8番目から4文字＋前から1番目から2文字＋前から4番目から2文字
+set DatePath ='%date:~-8,4%%date:~0,2%%date:~3,2%';
+
+set vLog = 'C:\Users\marun\OneDrive\デスクトップ\Folder\Qlikveiw Reference Book\log.txt';
+
+let vExecString = 'cmd.exe /c XCOPY /Y/I "$(SalesPath)/売上" "$(BackupPath)/Backup/$(DatePath)"'&'>>"$(vLog)"';
+
+EXECUTE $(vExecString);
+
+let path_uriage_qvd = '$(SalesPath)\売上.qvd';
+
+
+//Normal Way
+// 売上:
+// load
+// '' as 店名,
+// '' as 品目,
+// '' as 年月,
+// 0 as 金額,
+// '' as edpymd
+// AutoGenerate 0;
+
+trace v;
+trace $(v);
+//Advanced Way
+let FLD = '店名,品目,年月,金額,edpymd';
+let v ='';
+for i = 1 to SubStringCount('$(FLD)',',')+1
+  if not(i=1) then; let v = '$(v)'&',' ;endif;
+  let v ='$(v)'&'^ as ';
+  let v ='$(v)'& SubField('$(FLD)',',',i);
+next
+  let v = Replace('$(v)','^',chr(39)&chr(39));
+  trace $(v);
+
+売上:
+load
+$(v)
+AutoGenerate 0;
+
+
+if not IsNull(QvdCreateTime('$(path_uriage_qvd)')) then
+ Concatenate(売上)
+ load * from $(path_uriage_qvd)(qvd);
+end if
+
+NULL_TO_ZERO:
+Mapping load null(),0 AutoGenerate 1;
+Mapping load '',0 AutoGenerate 1;
+
+
+trace filelist;
+
+for each filename in FileList('$(SalesPath)\売上\*.xlsx');
+trace Importedfile:$(filename);
+	set ErrorMode =1;
+	for MyCheck = 1 to 1
+    Set ErrorMode =0;
+    
+        MAP * using NULL_TO_ZERO;
+
+        excel_data:
+        load
+        Distinct 
+        *
+        From [$(filename)]
+        (ooxml, embedded labels, table is 売上);
+
+        Unmap *;
+
+            for i = 2 to NoOfFields('excel_data')
+                let f = FieldName(i,'excel_data');
+                  Concatenate(売上)
+                load
+                    SubField(SubField('$(filename)','\',-1),'.',1) as 店名,
+                    品目,
+                    $(f) as 年月,
+                    "$(f)" as 金額,
+                    FileTime('$(filename)') as edpymd
+                Resident excel_data;
+            next i
+
+            drop table excel_data;
+
+    //         if not(ScriptError='') then
+    //         	trace Excel Load Error_>$(filename);
+    //             Exit for;
+    //         endif
+    
+    next
+        
+next
+set ErrorMode =1;
+
+left join(売上)
+load
+	店名,
+    品目,
+    年月,
+    MaxString(edpymd) as max_edpymd
+Resident 売上
+Group by 店名,品目,年月;
+
+rename table 売上 to back;
+NoConcatenate
+売上:
+load
+	*
+Resident back
+where edpymd =max_edpymd;
+
+drop table back;
+drop field max_edpymd from 売上;
+
+
+if NoOfRows('売上')>0 then
+	store 売上 into $(path_uriage_qvd)(qvd);
+endif
+
+
+rename table 売上 to back;
+NoConcatenate
+売上:
+load
+	*,
+    left(年月,4) as 年,
+    right(年月,2) as 月
+Resident back;
+drop Table back;
+
+
+rename table 売上 to back;
+Qualify *;
+Unqualify 店名;
+NoConcatenate
+売上:
+load
+*
+Resident back;
+Unqualify *;
+drop table back;
+
+
+
+Qualify *;
+Unqualify 店名;
+NoConcatenate
+店舗:
+load
+	*
+    from [$(SalesPath)\売上\店舗.xlsx]
+    (ooxml, embedded labels, table is Sheet1);
+Unqualify *;
+
+
+Exit Script;
+
+
+
