@@ -64,40 +64,27 @@ int main(int argc, char *argv[]){
     }
 
     p=start;
-    while(1){
-        if (p == end) break;
-
-        p = p->next;
-    }
-
-    for (p=start;p != end; p=p->next){  
- //       printf("Before\n"); 
-       printf("Before start=%p end=%p p=%p x=%d\n",start, end, p,p->num);
-
-        print_head(p);
-        print_tail(p);
-
+    while(p != end){
+  /*       print_head(p);
+  //      print_tail(p); */
+        q=p->next;
+        if(q==end){
+            printf("最終ノード\n");
+            end=p;
+        }
         if(p->num % 2 ==0){
-          printf("削除 p=%p x=%d\n",p,p->num);  
-            q=p->next;
-            if(q==end){
-                printf("最終ノード\n");
-                end = p;
-            } else {
-                *p=*q;
-            }
+            *p=*q;
             free(q);
+        }else{
+             if(p==end){
+             end = get_node();   // new 番兵
+             p->num = x;
+             p->next = end;
+             break; 
+            }
+            p = p->next;
         }
-
-        printf("After\n");
-        printf("After2 start=%p end=%p p=%p x=%d\n",start, end, p,p->num);
-        // print_head(p);
-        // print_tail(p);
-
-        if(p==end) {
-            printf("p==end\n");
-            break;
-        }
+        
     }
 
     printf("削除後\n");
