@@ -64,25 +64,30 @@ int main(int argc, char *argv[]){
     }
 
     p=start;
+    for(p=start;p != end;)
+    
+
+ /* 
     while(p != end){
   /*       print_head(p);
   //      print_tail(p); */
         q=p->next;
         if(q==end){
             printf("最終ノード\n");
-            end=p;
-        }
+            end=p; //endにpを入れるのは後でqを開放する時にendが最終ノード(番兵)を掴んでいて開放できないからと思われる
+        } */
+
         if(p->num % 2 ==0){
             *p=*q;
-            free(q);
+            free(q);    
         }else{
              if(p==end){
-             end = get_node();   // new 番兵
+             end = get_node();   //後で削除後の結果を出力する際に、!=endが終了条件になってるので終わりを1個増やしとく
              p->num = x;
              p->next = end;
-             break; 
+             break;           //最後が
             }
-            p = p->next;
+            p = p->next;  //pが奇数の場合は1つ進める
         }
         
     }
