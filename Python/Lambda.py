@@ -22,6 +22,6 @@ a=edit_story(stairs,enliven) #enlivenが引数として与えられている
 print(a)
 
 # 1-3. Lamda関数への置き換え
-# print(f"\nlambdaによる実装")
+print(f"\nlambdaによる実装")
 b=edit_story(stairs,lambda word: word.capitalize()+'!')
 print(b)

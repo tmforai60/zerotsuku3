@@ -1,11 +1,9 @@
-# coding: UTF-8
+
 #%%
 import os
 import pandas as pd
+import numpy as np
 
-import sys
-print(sys.version)
-print(sys.path)
 
 working_directory=os.getcwd()
 print(working_directory)
