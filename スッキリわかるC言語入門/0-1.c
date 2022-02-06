@@ -4,6 +4,8 @@ int main(void)
 {
     printf("hello,world\n");
     printf("%d\n",29+29);
+    printf("hello,world no enter");
+    printf("%d\n",29+29);
 
     int x;
     x=6;
