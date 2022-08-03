@@ -18,15 +18,14 @@ def using_config(name, value):
 
 
 def no_grad():
-    return using_config('enable_backprop', False)
+    return using_config("enable_backprop", False)
 
 
 class Variable:
-
     def __init__(self, data):
         if data is not None:
             if not isinstance(data, np.ndarray):
-                raise TypeError('{} is not supported'.format(type(data)))
+                raise TypeError("{} is not supported".format(type(data)))
 
         self.data = data
         self.grad = None
@@ -106,16 +105,18 @@ class Function:
     def backward(self, gys):
         raise NotImplementedError()
 
+
 # 二乗関数
 class Square(Function):
     def forward(self, x):
-        y = x ** 2
+        y = x**2
         return y
 
     def backward(self, gy):
         x = self.inputs[0].data
         gx = 2 * x * gy
         return gx
+
 
 def square(x):
     return Square()(x)
@@ -129,6 +130,7 @@ class Add(Function):
 
     def backward(self, gy):
         return gy, gy
+
 
 def add(x0, x1):
     return Add()(x0, x1)
