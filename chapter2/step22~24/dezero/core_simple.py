@@ -260,13 +260,23 @@ class Pow(Function):
     def backward(self, gy):
         x = self.inputs[0].data
         c = self.c
-
         gx = c * x ** (c - 1) * gy
         return gx
 
+# class Pow(Function):
+#     def forward(self, x, c):
+#         y = x ** c
+#         return y
+
+#     def backward(self, gy):
+#         x, c = self.inputs[0].data, self.inputs[1].data
+#         gx = c * x ** (c - 1) * gy
+#         return gx
+
 
 def pow(x, c):
-    return Pow(c)(x)
+    c = as_array(c)
+    return Pow()(x, c)
 
 
 def setup_variable():
