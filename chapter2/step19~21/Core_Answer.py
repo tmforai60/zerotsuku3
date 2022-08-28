@@ -1,6 +1,7 @@
-import weakref
-import numpy as np
 import contextlib
+import weakref
+
+import numpy as np
 
 
 class Config:
@@ -22,13 +23,16 @@ def no_grad():
 
 
 class Variable:
-    def __init__(self, data):
+    __array_priority__ = 1.0
+
+    def __init__(self, data, name=None):
         if data is not None:
             if not isinstance(data, np.ndarray):
                 raise TypeError("{} is not supported".format(type(data)))
 
         self.data = data
         self.grad = None
+        self.name = name
         self.creator = None
         self.generation = 0
 
@@ -74,6 +78,45 @@ class Variable:
                 for y in f.outputs:
                     y().grad = None  # y is weakref
 
+    @property
+    def shape(self):
+        return self.data.shape
+
+    @property
+    def dtype(self):
+        return self.data.dtype
+
+    @property
+    def size(self):
+        return self.data.size
+
+    @property
+    def ndim(self):
+        return self.data.ndim
+
+    def __repr__(self):
+        if self.data is None:
+            return "variable(None)"
+        p = str(self.data).replace("\n", "\n" + " " * 9)
+        return "variable(" + p + ")"
+
+    def __len__(self):
+        return len(self.data)
+
+    # *演算子のオーバーロード
+    def __mul__(self, other):
+        return mul(self, other)
+
+    def __rmul__(self, other):
+        return mul(self, other)
+
+    # +演算子のオーバーロード
+    def __add__(self, other):
+        return add(self, other)
+
+    def __radd__(self, other):
+        return add(self, other)
+
 
 def as_array(x):
     if np.isscalar(x):
@@ -83,6 +126,7 @@ def as_array(x):
 
 class Function:
     def __call__(self, *inputs):
+        inputs = [as_variable(x) for x in inputs]  # ←これを追加
 
         xs = [x.data for x in inputs]
         ys = self.forward(*xs)
@@ -133,4 +177,37 @@ class Add(Function):
 
 
 def add(x0, x1):
+    x1 = as_array(x1)
     return Add()(x0, x1)
+
+
+# 乗算
+class Mul(Function):
+    def forward(self, x0, x1):
+        y = x0 * x1
+        return y
+
+    def backward(self, gy):
+        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        return gy * x1, gy * x0
+
+
+# 関数として呼び出せるようにしておく
+def mul(x0, x1):
+    print(f"x0:{x0}")
+    print(f"x1:{x1}")
+    x1 = as_array(x1)
+    return Mul()(x0, x1)
+
+
+def as_variable(obj):
+    if isinstance(obj, Variable):
+        return obj
+    return Variable(obj)
+
+
+# 特殊メソッドに関数オブジェクトを代入してもよい
+# Variable.__add__ = add
+# Variable.__radd__ = add
+# Variable.__mul__ = mul
+# Variable.__rmul__ = mul
